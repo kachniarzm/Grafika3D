@@ -15,9 +15,6 @@ uniform mat4 m_view;
 uniform mat4 m_view_inv;
 uniform mat4 m_projection;
 uniform mat3 m_normal;
-uniform int ifFishEye;
-uniform vec3 cameraPosition;
-uniform vec3 cameraDirection;
 
 void main(void)
 {
@@ -28,19 +25,5 @@ void main(void)
 	f_marktexcoord = marktexcoord;
 
 	mat4 mvp = m_projection * m_view * m_transform;
-	mat4 mv = m_view * m_transform;
-	
-	if (ifFishEye == 1)
-	{
-		vec3 eyeToV = vec3(f_position) - cameraPosition;
-		float theta = acos(dot(normalize(cameraDirection), normalize(eyeToV)));
-		float r = length(eyeToV) * sin(theta);
-		vec4 tmp = mv * vec4(coord3d, 1.0);
-		
-		gl_Position = vec4(4 * sin(theta / 2) / r * tmp.x, 4 * sin(theta / 2) / r * tmp.y, length(eyeToV) / 100f, 1.0);		
-	}
-	else
-	{
-		gl_Position = mvp * vec4(coord3d, 1.0);
-	}
+	gl_Position = mvp * vec4(coord3d, 1.0);
 }
