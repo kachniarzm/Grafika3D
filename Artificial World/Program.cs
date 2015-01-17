@@ -207,9 +207,11 @@ namespace Artificial_World
         int _uniformifTextured;
         int _uniformifMarkTextured;
         int _uniformCameraPosition;
+        int _uniformCameraDirection;
         int _uniformFogRatio;
         int _uniformIfMaxLight;
         int _uniformOpacity;
+        int _uniformifFishEye;
 
         #endregion
 
@@ -232,6 +234,7 @@ namespace Artificial_World
 
         FloorType _floorType = FloorType.LightWood;
         float _fogRatio = 0;
+        bool _ifFishEye = true;
 
         #endregion
 
@@ -393,6 +396,8 @@ namespace Artificial_World
                 _fogRatio -= 0.01f;
             else if (e.KeyChar == 'c')
                 currentCameraIndex = (currentCameraIndex + 1) % 2;
+            else if (e.KeyChar == 'g')
+                _ifFishEye = !_ifFishEye;
         }
 
         #endregion
@@ -485,11 +490,15 @@ namespace Artificial_World
 
             _uniformCameraPosition = GL.GetUniformLocation(_program, "cameraPosition");
 
+            _uniformCameraDirection = GL.GetUniformLocation(_program, "cameraDirection");
+
             _uniformFogRatio = GL.GetUniformLocation(_program, "fogRatio");
 
             _uniformIfMaxLight = GL.GetUniformLocation(_program, "ifMaxLight");
 
             _uniformOpacity = GL.GetUniformLocation(_program, "opacity");
+
+            _uniformifFishEye = GL.GetUniformLocation(_program, "ifFishEye");
         }
 
         private void InitAttributes()
@@ -600,9 +609,11 @@ namespace Artificial_World
             Matrix4 viewInverted = _matrixView.Inverted();
             GL.UniformMatrix4(_uniformViewInvertedMatix, false, ref viewInverted);
             GL.Uniform3(_uniformCameraPosition, _eye[ifAgain ? 0 : 1]);
+            GL.Uniform3(_uniformCameraDirection, _eyeDirection[ifAgain ? 0 : 1]);
             GL.Uniform1(_uniformFogRatio, _fogRatio);
             GL.Uniform1(_uniformIfMaxLight, 0);
             GL.Uniform1(_uniformOpacity, 1f);
+            GL.Uniform1(_uniformifFishEye, _ifFishEye ? 1 : 0);
 
             //DrawModelWithShader(benchModel, Color.SandyBrown, new Vector3(25, 0, 9), new Vector3(0, 90, 0), new Vector3(0.02f, 0.02f, 0.02f));
             //DrawModelWithShader(benchModel, Color.SandyBrown, new Vector3(21, 0, 9), Vector3.Zero, new Vector3(0.02f, 0.02f, 0.02f));
@@ -637,6 +648,12 @@ namespace Artificial_World
             DrawCubeWithShader(new DrawingCube(new Vector3(5, 0, 22), new Vector3(28, 1f, 0.1f), _advTextureId, _cubeAdvTexcoords));
             DrawCubeWithShader(new DrawingCube(new Vector3(5, 0, 7), new Vector3(0.1f, 1f, 15.1f), _advTextureId, _cubeAdvTexcoords));
             DrawCubeWithShader(new DrawingCube(new Vector3(33, 0, 7), new Vector3(0.1f, 1f, 15.1f), _advTextureId, _cubeAdvTexcoords));
+
+            // test
+            DrawCubeWithShader(new DrawingCube(new Vector3(25, 0, 15), new Vector3(1f, 1f, 1f), Color.White));
+            DrawCubeWithShader(new DrawingCube(new Vector3(27, 0, 15), new Vector3(1f, 1f, 1f), Color.White));
+            DrawCubeWithShader(new DrawingCube(new Vector3(25, 0, 17), new Vector3(1f, 1f, 1f), Color.White));
+            DrawCubeWithShader(new DrawingCube(new Vector3(27, 0, 17), new Vector3(1f, 1f, 1f), Color.White));
 
             // sticks
             DrawCubeWithShader(new DrawingCube(new Vector3(19, 0, 9), new Vector3(0.1f, 2.43f, 0.1f), Color.PapayaWhip));
@@ -922,6 +939,13 @@ namespace Artificial_World
 
         private void DrawCubeWithShader(DrawingCube cube)
         {
+            if (_ifFishEye)
+            {
+                cube.Color = Color.White;
+                cube.TextureId = null;
+                cube.MarksTextureId = null;
+            }
+
             Matrix4 transformMatrix = CreateTransformationMatrix(cube.Offsets, cube.Rotations, cube.Scale, cube.RotationFirst);
             GL.UniformMatrix4(_uniformModelMatix, false, ref transformMatrix);
 
