@@ -6,6 +6,7 @@ varying vec2 f_marktexcoord;
 
 uniform sampler2D myTexture;
 uniform sampler2D myMarkTexture;
+uniform sampler2D myHeightTexture;
 
 uniform mat4 m_transform;
 uniform mat4 m_view;
@@ -19,6 +20,7 @@ uniform float opacity;
 uniform int ifTextured;
 uniform int ifMarkTextured;
 uniform int ifMaxLight;
+uniform int ifHeightTextured;
  
 struct lightSource
 {
@@ -190,6 +192,12 @@ void main()
 		{
 			actualColor = texture2D(myTexture, f_texcoord);
 		}
+		
+		// test
+		//if (ifHeightTextured == 1)
+		//{
+		//	actualColor = texture2D(myHeightTexture, f_texcoord);
+		//}
 	}
 	else
 	{

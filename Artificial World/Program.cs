@@ -214,8 +214,10 @@ namespace Artificial_World
         int _uniformViewInvertedMatix;
         int _uniformTexture;
         int _uniformMarkTexture;
+        int _uniformHeightTexture;
         int _uniformifTextured;
         int _uniformifMarkTextured;
+        int _uniformifHeightTextured;
         int _uniformCameraPosition;
         int _uniformFogRatio;
         int _uniformIfMaxLight;
@@ -234,6 +236,7 @@ namespace Artificial_World
         uint _advTextureId;
         uint _fireTextureId;
         uint _rockTextureId;
+        uint _rockHeightTextureId;
 
         uint[] _manTextureId = new uint[13];
 
@@ -269,6 +272,7 @@ namespace Artificial_World
             _floorMarkId = LoadTexture("Textures/field.png");
             _fireTextureId = LoadTexture("Textures/fire.png");
             _rockTextureId = LoadTexture("Textures/rockbump.png");
+            _rockHeightTextureId = LoadTexture("Textures/rockbump_DISP.jpg");
 
             for (int i = 0; i < _manTextureId.Length; i++)
             {
@@ -491,9 +495,13 @@ namespace Artificial_World
 
             _uniformMarkTexture = GL.GetUniformLocation(_program, "myMarkTexture");
 
+            _uniformHeightTexture = GL.GetUniformLocation(_program, "myHeightTexture");
+
             _uniformifTextured = GL.GetUniformLocation(_program, "ifTextured");
 
             _uniformifMarkTextured = GL.GetUniformLocation(_program, "ifMarkTextured");
+
+            _uniformifHeightTextured = GL.GetUniformLocation(_program, "ifHeightTextured");
 
             _uniformCameraPosition = GL.GetUniformLocation(_program, "cameraPosition");
 
@@ -662,6 +670,7 @@ namespace Artificial_World
             // relief map cube
             DrawCubeWithShader(new DrawingCube(new Vector3(19, 1, 15), new Vector3(2, 2, 2), _rockTextureId, _cubeRockTexcoords)
             {
+                HeightTextureId = _rockHeightTextureId
             });
             
             // telebim
@@ -1009,6 +1018,20 @@ namespace Artificial_World
                 else
                 {
                     GL.Uniform1(_uniformifMarkTextured, 0);
+                }
+
+                if (cube.HeightTextureId != null)
+                {
+                    GL.Uniform1(_uniformifHeightTextured, 1);
+
+                    GL.ActiveTexture(TextureUnit.Texture2);
+                    GL.BindTexture(TextureTarget.Texture2D, (uint)cube.HeightTextureId);
+                    _uniformHeightTexture = GL.GetUniformLocation(_program, "myHeightTexture");
+                    GL.Uniform1(_uniformHeightTexture, 2);
+                }
+                else
+                {
+                    GL.Uniform1(_uniformifHeightTextured, 0);
                 }
             }
 

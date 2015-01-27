@@ -112,6 +112,9 @@
     <Content Include="Textures\rockbump.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Textures\rockbump_DISP.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="App.config" />
     <Content Include="graphics models\bench.obj">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

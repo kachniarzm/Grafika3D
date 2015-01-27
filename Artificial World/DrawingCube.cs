@@ -53,7 +53,9 @@ namespace Artificial_World
         public DrawingType Drawing { get; set; }
             
         public uint? MarksTextureId { get; set; }
-        
+
+        public uint? HeightTextureId { get; set; }
+
         public float[] TextureMapping { get; set; }
             
         public bool RotationFirst { get; set; }
