@@ -84,6 +84,16 @@ namespace Artificial_World
             0, 0,  0, 0,   0, 0,  0, 0  // back
         };
 
+        readonly float[] _cubeRockTexcoords =
+        {
+            1, 0,  0, 0,   0, 1,  1, 1, // front (from light side)
+            0, 0,  0, 1,   1, 1,  1, 0, // right (from start persp)
+            0, 0,  1, 0,   1, 1,  0, 1, // top
+            1, 0,  0, 0,   0, 1,  1, 1, // left
+            0, 0,  1, 0,   1, 1,  0, 1, // bottom
+            0, 1,  1, 1,   1, 0,  0, 0  // back
+        };
+
         readonly float[] _cubeAdvTexcoords =
         {
             3, 0,  0, 0,   0, 1,  3, 1, // front (from light side)
@@ -223,6 +233,7 @@ namespace Artificial_World
         uint _floorMarkId;
         uint _advTextureId;
         uint _fireTextureId;
+        uint _rockTextureId;
 
         uint[] _manTextureId = new uint[13];
 
@@ -257,6 +268,7 @@ namespace Artificial_World
             _floor2TextureId = LoadTexture("Textures/floor_2.jpg");
             _floorMarkId = LoadTexture("Textures/field.png");
             _fireTextureId = LoadTexture("Textures/fire.png");
+            _rockTextureId = LoadTexture("Textures/rockbump.png");
 
             for (int i = 0; i < _manTextureId.Length; i++)
             {
@@ -645,6 +657,11 @@ namespace Artificial_World
             DrawCubeWithShader(new DrawingCube(new Vector3(-10, 0, -10), new Vector3(58, 20, 49), Color.LightGray)
             {
                 Drawing = DrawingType.TriangelesInside
+            });
+
+            // relief map cube
+            DrawCubeWithShader(new DrawingCube(new Vector3(19, 1, 15), new Vector3(2, 2, 2), _rockTextureId, _cubeRockTexcoords)
+            {
             });
             
             // telebim
