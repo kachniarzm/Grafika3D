@@ -74,6 +74,16 @@ namespace Artificial_World
                        0, 1, 0,   0, 1, 0,   0, 1, 0,   0, 1, 0,   // v7,v4,v3,v2 (bottom)
                        0, 0, 1,   0, 0, 1,   0, 0, 1,   0, 0, 1 }; // v4,v7,v6,v5 (back)
 
+        readonly float[] _cubeTangents =
+        {
+            1, 1, 0,   1, 1, 0,   1, 1, 0,   1, 1, 0,
+            0, 1, 1,   0, 1, 1,   0, 1, 1,   0, 1, 1,   
+            1, 0, 1,   1, 0, 1,   1, 0, 1,   1, 0, 1,   
+            0,-1,-1,   0,-1,-1,   0,-1,-1,   0,-1,-1,
+           -1, 0,-1,  -1, 0,-1,  -1, 0,-1,  -1, 0,-1,
+           -1,-1, 0,  -1,-1, 0,  -1,-1, 0,  -1,-1, 0  
+        };
+        
         readonly float[] _cubeStandardTexcoords =
         {
             0, 0,  0, 0,   0, 0,  0, 0, // front (from light side)
@@ -195,6 +205,7 @@ namespace Artificial_World
 
         uint _vboCubeVertices;
         uint _vboCubeNormals;
+        uint _vboCubeTangents;
         uint _vboCubeColors;
         uint _vboCubeTexcoords;
         uint _vboCubeMarkTexcoords;
@@ -203,6 +214,7 @@ namespace Artificial_World
         int _attributeCoord3;
         int _attributeColor;
         int _attributeNormal;
+        int _attributeTangent;
         int _attributeTexcoord;
         int _attributeMarkTexcoord;
 
@@ -464,6 +476,10 @@ namespace Artificial_World
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vboCubeNormals);
             GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(_cubeNormals.Length * sizeof(float)), _cubeNormals, BufferUsageHint.DynamicDraw);
 
+            GL.GenBuffers(1, out _vboCubeTangents);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _vboCubeTangents);
+            GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(_cubeTangents.Length * sizeof(float)), _cubeTangents, BufferUsageHint.DynamicDraw);
+
             GL.GenBuffers(1, out _vboCubeColors);
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vboCubeColors);
             GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(_cubeColors.Length * sizeof(float)), _cubeColors, BufferUsageHint.DynamicDraw);
@@ -519,6 +535,8 @@ namespace Artificial_World
             _attributeColor = GL.GetAttribLocation(_program, "v_color");
 
             _attributeNormal = GL.GetAttribLocation(_program, "v_normal");
+
+            _attributeTangent = GL.GetAttribLocation(_program, "v_tangent");
 
             _attributeTexcoord = GL.GetAttribLocation(_program, "texcoord");
 
@@ -1065,6 +1083,7 @@ namespace Artificial_World
             GL.EnableVertexAttribArray(_attributeColor);
             GL.EnableVertexAttribArray(_attributeCoord3);
             GL.EnableVertexAttribArray(_attributeNormal);
+            GL.EnableVertexAttribArray(_attributeTangent);
             GL.EnableVertexAttribArray(_attributeTexcoord);
             GL.EnableVertexAttribArray(_attributeMarkTexcoord);
 
@@ -1118,6 +1137,19 @@ namespace Artificial_World
                 }
             }
 
+            if (cube.HeightTextureId != null)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, _vboCubeTangents);
+
+                GL.VertexAttribPointer(
+                    _attributeTangent, // attribute
+                    3, // number of elements per vertex, here (x,y)
+                    VertexAttribPointerType.Float, // the type of each element
+                    false, // take our values as-is
+                    0, // no extra data between each position
+                    0); // offset of first element
+            }
+
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vboCubeNormals);
 
             GL.VertexAttribPointer(
@@ -1137,6 +1169,7 @@ namespace Artificial_World
             GL.DisableVertexAttribArray(_attributeCoord3);
             GL.DisableVertexAttribArray(_attributeColor);
             GL.DisableVertexAttribArray(_attributeNormal);
+            GL.DisableVertexAttribArray(_attributeTangent);
             GL.DisableVertexAttribArray(_attributeTexcoord);
             GL.DisableVertexAttribArray(_attributeMarkTexcoord);
         }

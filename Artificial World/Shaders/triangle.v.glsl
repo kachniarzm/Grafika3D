@@ -16,6 +16,7 @@ uniform mat4 m_view_inv;
 uniform mat4 m_projection;
 uniform mat3 m_normal;
 
+attribute vec3 v_tangent;
 void main(void)
 {
 	f_position = m_transform * vec4(coord3d, 1.0);
