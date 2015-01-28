@@ -1,4 +1,7 @@
-﻿varying vec4 f_position;  // position of the vertex (and fragment) in world space
+﻿#define LINEAR_STEPS    10
+#define BINARY_STEPS    5
+
+varying vec4 f_position;  // position of the vertex (and fragment) in world space
 varying vec4 color;
 varying vec3 varyingNormalDirection;  // surface normal vector in world space
 varying vec2 f_texcoord;
@@ -22,9 +25,12 @@ uniform int ifMarkTextured;
 uniform int ifMaxLight;
 uniform int ifHeightTextured;
  
-varying vec4 mv_position;
-varying vec3 etangent;
-varying vec3 ebitangent;
+//varying vec4 mv_position;
+//varying vec3 etangent;
+//varying vec3 ebitangent;
+
+varying mat3 TBN;
+varying vec3 point;
 
 struct lightSource
 {
@@ -144,6 +150,44 @@ float find_intersection(vec2 dp, vec2 ds) {
 	return best_depth;
 }
 
+float linearSearch(vec2 A, vec2 B)
+{
+    float t = 0.0;
+
+    for(int i = 0; i < LINEAR_STEPS; i++)
+    {
+        t += 1.0 / LINEAR_STEPS;
+        float d = texture2D(myHeightTexture, mix(A, B, t)).a;
+        if(t > d) break;
+    }
+
+    return t;
+}
+
+float binarySearch(vec2 A, vec2 B, float a, float b)
+{
+    float depth;
+
+    for(int i = 0; i < BINARY_STEPS; i++)
+    {
+        depth = mix(a, b, 0.5);
+        float d = texture2D(myHeightTexture, mix(A, B, depth)).a;
+
+        if(d > depth)
+            a = depth;
+        else
+            b = depth;
+    }
+
+    return depth;
+}
+
+float fullSearch(vec2 A, vec2 B)
+{
+    float depth = linearSearch(A, B);
+    return binarySearch(A, B, depth-(1.0 / LINEAR_STEPS), depth);
+}
+
 void main()
 {
 	lights[0] = light0;
@@ -234,13 +278,25 @@ void main()
 			vec3 A = vec3(f_position);
 			float depth = 1;
 			vec3 B = A + normalize(A - cameraPosition) * depth;*/
+			
+			vec3 to_eye = (cameraPosition - point) * TBN;
+			vec3 position_tan = point * TBN;
+			vec3 eye_to_pos = vec3(m_view * m_transform * vec4(point, 1.0));
+			
+			vec2 A = f_texcoord;
+			vec3 V = (to_eye / -to_eye.z) * 1;
+			vec2 B = A + V.xy;
+			float depth = fullSearch(A, B);
+			vec3 P = vec3(mix(A, B, depth), depth);
+			
+			actualColor = texture2D(myTexture, P.xy);
 
-
+		/*
 			// e: eye space
 			// t: tangent space
 			float depth = 1;
 			vec3 eview = normalize(vec3(mv_position));
-			vec3 tview = normalize(vec3(dot(eview, etangent), dot(eview, ebitangent), dot(eview, -varyingNormalDirection)));
+			vec3 tview = normalize(vec3(dot(eview, etangent), dot(eview, ebitangent), dot(eview, -TEST_normal)));
 			vec2 ds = tview.xy * depth / tview.z;
 			vec2 dp = f_texcoord;
 			float dist = find_intersection(dp, ds);
@@ -251,6 +307,7 @@ void main()
 			//vec3 R = reflect(V, mapN);
 			//vec3 L = normalize(efragCoord.xyz - gl_LightSource[0].position.xyz);
 			actualColor = texture2D(myTexture, uv);
+		*/	
 		}
 	}
 	else
