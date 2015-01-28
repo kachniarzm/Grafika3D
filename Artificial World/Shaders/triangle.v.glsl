@@ -17,6 +17,9 @@ uniform mat4 m_projection;
 uniform mat3 m_normal;
 
 attribute vec3 v_tangent;
+varying vec3 etangent;
+varying vec3 ebitangent;
+
 void main(void)
 {
 	f_position = m_transform * vec4(coord3d, 1.0);
@@ -27,4 +30,7 @@ void main(void)
 
 	mat4 mvp = m_projection * m_view * m_transform;
 	gl_Position = mvp * vec4(coord3d, 1.0);
+
+	etangent = m_normal * v_tangent;
+	ebitangent = cross(m_normal * v_normal, etangent);
 }

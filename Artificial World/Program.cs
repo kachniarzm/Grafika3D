@@ -1137,8 +1137,8 @@ namespace Artificial_World
                 }
             }
 
-            if (cube.HeightTextureId != null)
-            {
+            //if (cube.HeightTextureId != null)
+            //{
                 GL.BindBuffer(BufferTarget.ArrayBuffer, _vboCubeTangents);
 
                 GL.VertexAttribPointer(
@@ -1148,7 +1148,7 @@ namespace Artificial_World
                     false, // take our values as-is
                     0, // no extra data between each position
                     0); // offset of first element
-            }
+            //}
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vboCubeNormals);
 

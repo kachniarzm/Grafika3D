@@ -22,6 +22,9 @@ uniform int ifMarkTextured;
 uniform int ifMaxLight;
 uniform int ifHeightTextured;
  
+varying vec3 etangent;
+varying vec3 ebitangent;
+
 struct lightSource
 {
   vec4 position;
@@ -198,6 +201,8 @@ void main()
 		//{
 		//	actualColor = texture2D(myHeightTexture, f_texcoord);
 		//}
+			vec3 dummy1 = etangent;
+			vec3 dummy2 = ebitangent;
 	}
 	else
 	{
