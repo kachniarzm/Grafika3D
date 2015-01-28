@@ -283,8 +283,8 @@ namespace Artificial_World
             _floor2TextureId = LoadTexture("Textures/floor_2.jpg");
             _floorMarkId = LoadTexture("Textures/field.png");
             _fireTextureId = LoadTexture("Textures/fire.png");
-            _rockTextureId = LoadTexture("Textures/rockbump.png");
-            _rockHeightTextureId = LoadTexture("Textures/rockbump_HEIGHT.jpg");
+            _rockTextureId = LoadTexture("Textures/cube_color.png");
+            _rockHeightTextureId = LoadTexture("Textures/cube_heightmap.png");
 
             for (int i = 0; i < _manTextureId.Length; i++)
             {
