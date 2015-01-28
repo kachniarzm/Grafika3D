@@ -76,7 +76,7 @@ namespace Artificial_World
 
         readonly float[] _cubeTangents =
         {
-            1, 1, 0,   1, 1, 0,   1, 1, 0,   1, 1, 0,
+            1, 0, 0,   1, 0, 0,   1, 0, 0,   1, 0, 0,
             0, 1, 1,   0, 1, 1,   0, 1, 1,   0, 1, 1,   
             1, 0, 1,   1, 0, 1,   1, 0, 1,   1, 0, 1,   
             0,-1,-1,   0,-1,-1,   0,-1,-1,   0,-1,-1,
@@ -96,12 +96,12 @@ namespace Artificial_World
 
         readonly float[] _cubeRockTexcoords =
         {
-            1, 0,  0, 0,   0, 1,  1, 1, // front (from light side)
             0, 0,  0, 1,   1, 1,  1, 0, // right (from start persp)
             0, 0,  1, 0,   1, 1,  0, 1, // top
             1, 0,  0, 0,   0, 1,  1, 1, // left
             0, 0,  1, 0,   1, 1,  0, 1, // bottom
             0, 1,  1, 1,   1, 0,  0, 0  // back
+            1, 1,  0, 1,   0, 0,  1, 0, // front (from light side)
         };
 
         readonly float[] _cubeAdvTexcoords =
@@ -686,7 +686,7 @@ namespace Artificial_World
             });
 
             // relief map cube
-            DrawCubeWithShader(new DrawingCube(new Vector3(19, 1, 15), new Vector3(2, 2, 2), _rockTextureId, _cubeRockTexcoords)
+            DrawCubeWithShader(new DrawingCube(new Vector3(19, 3, 15), new Vector3(2, 2, 2), _rockTextureId, _cubeRockTexcoords)
             {
                 HeightTextureId = _rockHeightTextureId
             });
