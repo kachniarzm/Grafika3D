@@ -22,6 +22,7 @@ uniform int ifMarkTextured;
 uniform int ifMaxLight;
 uniform int ifHeightTextured;
  
+varying vec4 mv_position;
 varying vec3 etangent;
 varying vec3 ebitangent;
 
@@ -117,6 +118,32 @@ material frontMaterial = material(
   50.0
 );
  
+float find_intersection(vec2 dp, vec2 ds) {
+	const int linear_steps = 10;
+	const int binary_steps = 5;
+	float depth_step = 1.0 / linear_steps;
+	float size = depth_step;
+	float depth = 1.0;
+	float best_depth = 1.0;
+	for (int i = 0 ; i < linear_steps - 1 ; ++i) {
+		depth -= size;
+		vec4 t = texture2D(myHeightTexture, dp + ds * depth);
+		if (depth >= 1.0 - t.r)
+			best_depth = depth;
+	}
+	depth = best_depth - size;
+	for (int i = 0 ; i < binary_steps ; ++i) {
+		size *= 0.5;
+		vec4 t = texture2D(myHeightTexture, dp + ds * depth);
+		if (depth >= 1.0 - t.r) {
+			best_depth = depth;
+			depth -= 2 * size;
+		}
+		depth += size;
+	}
+	return best_depth;
+}
+
 void main()
 {
 	lights[0] = light0;
@@ -196,13 +223,35 @@ void main()
 			actualColor = texture2D(myTexture, f_texcoord);
 		}
 		
-		// test
-		//if (ifHeightTextured == 1)
-		//{
-		//	actualColor = texture2D(myHeightTexture, f_texcoord);
-		//}
-			vec3 dummy1 = etangent;
-			vec3 dummy2 = ebitangent;
+		if (ifHeightTextured == 1)
+		{
+			/*actualColor = texture2D(myHeightTexture, f_texcoord);
+			if (actualColor.x < 0.2)
+			{
+				actualColor = vec4(1, 0, 0, 1);
+			}
+			
+			vec3 A = vec3(f_position);
+			float depth = 1;
+			vec3 B = A + normalize(A - cameraPosition) * depth;*/
+
+
+			// e: eye space
+			// t: tangent space
+			float depth = 1;
+			vec3 eview = normalize(vec3(mv_position));
+			vec3 tview = normalize(vec3(dot(eview, etangent), dot(eview, ebitangent), dot(eview, -varyingNormalDirection)));
+			vec2 ds = tview.xy * depth / tview.z;
+			vec2 dp = f_texcoord;
+			float dist = find_intersection(dp, ds);
+			vec2 uv = dp + dist * ds;
+
+			//vec3 tnormal = 2 * texture2D(normalmap, uv).xyz - vec3(1.0);
+			//vec3 mapN = normalize(-tnormal.x * etangent - tnormal.y * ebitangent + tnormal.z * N);
+			//vec3 R = reflect(V, mapN);
+			//vec3 L = normalize(efragCoord.xyz - gl_LightSource[0].position.xyz);
+			actualColor = texture2D(myTexture, uv);
+		}
 	}
 	else
 	{
@@ -210,7 +259,7 @@ void main()
 	}
 
 	// light
-	if (ifMaxLight == 0)
+	if (ifMaxLight == 0 && ifHeightTextured == 0)
 	{
 		actualColor = actualColor * vec4(totalLighting, 1.0);
 	}

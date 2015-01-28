@@ -5,6 +5,7 @@ attribute vec2 texcoord;
 attribute vec2 marktexcoord;
 
 varying vec4 f_position;
+varying vec4 mv_position;
 varying vec4 color;
 varying vec3 varyingNormalDirection;
 varying vec2 f_texcoord;
@@ -31,6 +32,7 @@ void main(void)
 	mat4 mvp = m_projection * m_view * m_transform;
 	gl_Position = mvp * vec4(coord3d, 1.0);
 
+	mv_position = m_view * m_transform * vec4(coord3d, 1.0);
 	etangent = m_normal * v_tangent;
 	ebitangent = cross(m_normal * v_normal, etangent);
 }
